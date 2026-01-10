@@ -7,6 +7,17 @@ interface User {
     createdAt?: Date;
 }
 
+interface Session {
+    id: string;
+    userId: string;
+    createdAt?: Date;
+    expiresAt?: Date
+}
+
+interface SessionWithUser extends Session {
+    user: User;
+}
+
 export const authRepo = {
     userExists: async (email: string): Promise<User | null> => {
         return await prisma.user.findUnique({
@@ -23,5 +34,26 @@ export const authRepo = {
                 passwordHash
             }
         })
+    },
+
+    createSession: async (userId: string): Promise<Session> => {
+        return await prisma.session.create({
+            data: {
+                userId
+            }
+        })
+    },
+
+    getSessionWithUser: async (session_id: string): Promise<SessionWithUser | null> => {
+        const result = await prisma.session.findUnique({
+            where: {
+                id: session_id
+            },
+            include: {
+                user: true
+            }
+        })
+        return result
     }
+
 }

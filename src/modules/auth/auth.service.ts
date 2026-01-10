@@ -42,11 +42,43 @@ export const authService = {
             throw new Error("INVALID_PASSWORD")
         }
 
+        // create session
+        const session = await authRepo.createSession(user.id)
+
         return {
             id: user.id,
-            email: user.email
+            email: user.email,
+            session_id: session.id
+        }
+    },
+
+    getUserFromSession: async (sessionId: string) => {
+
+        // get session
+        const session = await authRepo.getSessionWithUser(sessionId);
+
+        // check if session exists
+        if (!session) {
+            throw new Error("INVALID_SESSION");
         }
 
+        const now = new Date();
+        const sessionExpiryDate = session.expiresAt!;
+
+        // check if session is expired
+        if (now > sessionExpiryDate) {
+            throw new Error("SESSION_EXPIRED");
+        }
+
+        // check if user associated with session exists
+        if (!session.user) {
+            throw new Error("USER_NOT_FOUND");
+        }
+
+        // return associated user
+        return {
+            id: session.user.id,
+            email: session.user.email
+        }
     }
 }
-

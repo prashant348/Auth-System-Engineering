@@ -18,4 +18,15 @@ model User {
   email        String   @unique
   passwordHash String
   createdAt    DateTime @default(now())
+
+  sessions Session[] // one user -> many sessions
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  createdAt DateTime @default(now())
+  expiresAt DateTime @default(dbgenerated("now() + interval '7 days'"))
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

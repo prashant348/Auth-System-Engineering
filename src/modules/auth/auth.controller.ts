@@ -49,10 +49,19 @@ export const authController = {
 
         try {
             const user = await authService.signin(email, password);
+            res.cookie("sessionId", user.session_id, {
+                httpOnly: true, // no JS access
+                sameSite:"lax",
+                secure: false, // production mai true
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7days
+            })
             return res.status(200).json({
                 success: true,
                 message: "User Signed In Successfully",
-                data: user
+                data: {
+                    id: user.id, 
+                    email: user.email,
+                }
             });
 
         } catch (err: any) {
