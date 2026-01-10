@@ -15,18 +15,18 @@ export const authController = {
 
         try {
             const user = await authService.signup(email, password);
-            return res.status(200).json({
+            return res.status(201).json({
                 success: true,
-                message: "User created successfully",
+                message: "User Registered Successfully",
                 data: user
             });
 
         } catch (err: any) {
             console.error("error in signup controller: ", err);
-            if (err.message === "EMAIL_ALREADY_EXISTS") {
+            if (err.message === "INVALID_EMAIL") {
                 return res.status(409).json({
                     success: false,
-                    message: "Email already exists"
+                    message: "Invalid Email"
                 })
             }
 
@@ -35,5 +35,47 @@ export const authController = {
                 message: "Server Error"
             })
         }
+    },
+
+    signin: async (req: Request, res: Response) => {
+        const { email, password }: { email: string, password: string } = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Email and password are required"
+            })
+        }
+
+        try {
+            const user = await authService.signin(email, password);
+            return res.status(200).json({
+                success: true,
+                message: "User Signed In Successfully",
+                data: user
+            });
+
+        } catch (err: any) {
+            console.error("error in signin controller: ", err)
+            if (err.message === "INVALID_EMAIL") {
+                return res.status(401).json({
+                    success: false,
+                    message: "Ivalid Email"
+                })
+            }
+
+            if (err.message === "INVALID_PASSWORD") {
+                return res.status(401).json({
+                    success: false,
+                    message: "Invalid Password"
+                })
+            }
+
+            return res.status(500).json({
+                success: false,
+                message: "Server Error"
+            })
+        }
+
     }
 }
