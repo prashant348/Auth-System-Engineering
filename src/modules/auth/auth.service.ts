@@ -80,5 +80,18 @@ export const authService = {
             id: session.user.id,
             email: session.user.email
         }
+    },
+
+    signout: async (sessionId: string) => {
+        if (!sessionId) throw new Error("NO_SESSION");
+
+        try {
+            await authRepo.deleteSessionById(sessionId)
+        } catch (err) {
+            console.error("SESSION_INVALID")
+            return "SESSION_INVALID"
+        }
+
+        return true;
     }
 }

@@ -16,5 +16,6 @@ router.get("/me", authMiddleware, (req, res) => {
     });
 });
 
+router.post("/signout", authMiddleware, authController.signout);
 
 export default router;

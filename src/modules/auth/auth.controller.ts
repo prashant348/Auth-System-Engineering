@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { authService } from "./auth.service.js";
+import { authRepo } from "./auth.repo.js";
 
 
 export const authController = {
@@ -86,5 +87,37 @@ export const authController = {
             })
         }
 
+    },
+
+    signout: async (req: Request, res: Response) => {
+        try {
+            const sessionId = req.cookies.sessionId;
+            const result = await authService.signout(sessionId);
+
+            if (result === "SESSION_INVALID") {
+                return res.status(401).json({
+                    success: false,
+                    message: "Invalid Session"
+                })
+            }
+
+            res.clearCookie("sessionId", {
+                httpOnly: true,
+                sameSite:"lax",
+                secure: false // in prod: true
+            })
+
+            return res.status(200).json({
+                success: true,
+                message: "User Signed Out Successfully"
+            })
+
+        } catch (err) {
+            console.error("error in signout controller: ", err);
+            res.status(500).json({
+                success: false,
+                message: "Server Error"
+            })
+        }
     }
 }

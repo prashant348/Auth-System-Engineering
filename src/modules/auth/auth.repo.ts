@@ -18,6 +18,10 @@ interface SessionWithUser extends Session {
     user: User;
 }
 
+interface BatchPayLoad {
+    count: number
+}
+
 export const authRepo = {
     userExists: async (email: string): Promise<User | null> => {
         return await prisma.user.findUnique({
@@ -54,6 +58,17 @@ export const authRepo = {
             }
         })
         return result
+    },
+
+    deleteSessionById: async (sessionId: string): Promise<BatchPayLoad> => {
+        const res = await prisma.session.deleteMany({
+            where: {
+                id: sessionId
+            }
+        })
+
+        console.log(res)
+        return res
     }
 
 }
