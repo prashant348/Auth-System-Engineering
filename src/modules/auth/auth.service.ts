@@ -42,8 +42,7 @@ export const authService = {
             throw new Error("INVALID_PASSWORD")
         }
 
-        // create session
-        const session = await authRepo.createSession(user.id)
+        const session = await authRepo.createSessionWithLimit(user.id)
 
         return {
             id: user.id,
@@ -80,7 +79,7 @@ export const authService = {
             id: session.user.id,
             email: session.user.email
         }
-    },
+    }, 
 
     signout: async (sessionId: string) => {
         if (!sessionId) throw new Error("NO_SESSION");

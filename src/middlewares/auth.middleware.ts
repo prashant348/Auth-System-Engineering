@@ -8,8 +8,10 @@ export async function authMiddleware(
     next: NextFunction
 ) {
     try {
-        console.log(req.cookies)
         const sessionId = req.cookies.sessionId;
+        console.log("cookies: ", req.cookies)
+        console.log("sessionId: ", sessionId);
+        console.log(req.headers)
         if (!sessionId || typeof sessionId !== "string") {
             return res.status(401).json({
                 success: false,
@@ -20,6 +22,8 @@ export async function authMiddleware(
         const user = await authService.getUserFromSession(sessionId);
         // attach user to request
         (req as any).user = user;
+        // attach session id to request
+        (req as any).sessionId = sessionId;
 
         next();
     } catch (err: any) {

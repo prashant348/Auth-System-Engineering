@@ -1,6 +1,5 @@
 import type { Request, Response } from "express";
 import { authService } from "./auth.service.js";
-import { authRepo } from "./auth.repo.js";
 
 
 export const authController = {
@@ -50,9 +49,12 @@ export const authController = {
 
         try {
             const user = await authService.signin(email, password);
-            res.cookie("sessionId", user.session_id, {
+            const sessionId = user.session_id
+            console.log(sessionId);
+            res.cookie("sessionId", sessionId, {
                 httpOnly: true, // no JS access
                 sameSite:"lax",
+                path: "/",
                 secure: false, // production mai true
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7days
             })
