@@ -1,0 +1,27 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protected Page</title>
+</head>
+
+<body>
+    <h1>This is a protected page/route</h1>
+    <button onclick="
+        fetch('/auth/signout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(() => {
+            window.location.href = '/auth/signin'
+        }).catch((err) => {
+            console.log('error in signing out: ', err)
+        })
+    ">
+        Sign Out
+    </button>
+</body>
+
+</html>

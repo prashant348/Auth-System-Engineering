@@ -4,16 +4,16 @@ import { authService } from "./auth.service.js";
 
 export const authController = {
     signup: async (req: Request, res: Response) => {
-        const { email, password }: { email: string, password: string } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: "Email and password are required"
-            })
-        }
-
+        
         try {
+            const { email, password }: { email: string, password: string } = req.body;
+    
+            if (!email || !password) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Email and password are required"
+                })
+            };
             const user = await authService.signup(email, password);
             return res.status(201).json({
                 success: true,
@@ -38,22 +38,22 @@ export const authController = {
     },
 
     signin: async (req: Request, res: Response) => {
-        const { email, password }: { email: string, password: string } = req.body;
-
-        if (!email || !password) {
-            return res.status(400).json({
-                success: false,
-                message: "Email and password are required"
-            })
-        }
 
         try {
+            const { email, password }: { email: string, password: string } = req.body;
+
+            if (!email || !password) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Email and password are required"
+                })
+            };
             const user = await authService.signin(email, password);
-            const sessionId = user.session_id
+            const sessionId = user.session_id;
             console.log(sessionId);
             res.cookie("sessionId", sessionId, {
                 httpOnly: true, // no JS access
-                sameSite:"lax",
+                sameSite: "lax",
                 path: "/",
                 secure: false, // production mai true
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7days
@@ -62,13 +62,13 @@ export const authController = {
                 success: true,
                 message: "User Signed In Successfully",
                 data: {
-                    id: user.id, 
+                    id: user.id,
                     email: user.email,
                 }
             });
 
         } catch (err: any) {
-            console.error("error in signin controller: ", err)
+            console.error("error in signin controller: ", err);
             if (err.message === "INVALID_EMAIL") {
                 return res.status(401).json({
                     success: false,
@@ -105,7 +105,7 @@ export const authController = {
 
             res.clearCookie("sessionId", {
                 httpOnly: true,
-                sameSite:"lax",
+                sameSite: "lax",
                 secure: false // in prod: true
             })
 

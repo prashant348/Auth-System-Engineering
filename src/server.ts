@@ -9,7 +9,10 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// 1. Parse JSON payloads (if you send fetch/axios requests)
 app.use(express.json());
+// 2. THIS IS THE FIX: Parse URL-encoded payloads (from standard HTML forms)
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use("/auth", authRouter);
 

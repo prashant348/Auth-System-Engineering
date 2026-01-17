@@ -1,0 +1,25 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Sign Up Page</h1>
+    <!-- this standard html form tag submit data as "application/x-www-form-urlencoded", not
+     "application/json", so app.use(express.json()); cant parse it and will occur error in controller logic,
+    to parse it use app.use(express.urlencoded({ extended: true })); in expressjs main backend file
+    -->
+    <form action="/auth/signup" method="post">
+        <input type="email" placeholder="email" name="email">
+        <input type="password" placeholder="password" name="password">
+        <button type="submit">Sign up</button>
+    </form>
+
+    <p>already have an account? <a href="/auth/signin">Sign In</a></p>
+
+</body>
+
+</html>
