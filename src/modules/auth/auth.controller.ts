@@ -15,11 +15,13 @@ export const authController = {
                 })
             };
             const user = await authService.signup(email, password);
-            return res.status(201).json({
-                success: true,
-                message: "User Registered Successfully",
-                data: user
-            });
+            // return res.status(201).json({
+            //     success: true,
+            //     message: "User Registered Successfully",
+            //     data: user
+            // });
+            console.log("user signed up: ", user);
+            return res.redirect("/auth/signin"); // redirect to /auth/signin after successful signup!
 
         } catch (err: any) {
             console.error("error in signup controller: ", err);
@@ -68,14 +70,16 @@ export const authController = {
                 secure: false, // production mai true
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7days 
             });
-            return res.status(200).json({
-                success: true,
-                message: "User Signed In Successfully",
-                data: {
-                    id: user.id,
-                    email: user.email,
-                }
-            });
+            // return res.status(200).json({
+            //     success: true,
+            //     message: "User Signed In Successfully",
+            //     data: {
+            //         id: user.id,
+            //         email: user.email,
+            //     }
+            // });
+            console.log("user signed in: ", user);
+            return res.redirect("/auth/me"); // redirect to /auth/me after successful signin!
 
         } catch (err: any) {
             console.error("error in signin controller: ", err);

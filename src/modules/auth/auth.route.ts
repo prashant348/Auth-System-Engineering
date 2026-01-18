@@ -2,6 +2,7 @@ import { Router, type Request, type Response } from "express";
 import { authController } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { csrfMiddleware } from "../../middlewares/csrf.middleware.js";
+import { guestMiddleware } from "../../middlewares/guest.middleware.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -14,18 +15,18 @@ const __filepath = fileURLToPath(import.meta.url); // here its value is:D:\Devel
 const __dirname = path.dirname(__filepath); // here its value is: D:\Development\Authentication\src\modules\auth 
 
 
-router.get("/signin", (req: Request, res: Response) => {
+router.get("/signin", guestMiddleware, (req: Request, res: Response) => {
     const filepath = path.join(__dirname, "views", "signin.html");
     return res.sendFile(filepath);
 });
 
-router.get("/signup", (req: Request, res: Response) => {
+router.get("/signup", guestMiddleware, (req: Request, res: Response) => {
     const filepath = path.join(__dirname, "views", "signup.html");
     return res.sendFile(filepath);
 });
 
-router.post("/signup", authController.signup);
-router.post("/signin", authController.signin);
+router.post("/signup", guestMiddleware, authController.signup);
+router.post("/signin", guestMiddleware, authController.signin);
 
 // protected route
 router.get("/me", authMiddleware, (req: Request, res: Response) => {

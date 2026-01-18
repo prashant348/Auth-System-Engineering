@@ -11,10 +11,12 @@ export async function authMiddleware(
         const sessionId = req.cookies.sessionId;
 
         if (!sessionId || typeof sessionId !== "string") {
-            return res.status(401).json({
-                success: false,
-                message: "UNAUTHORIZED"
-            });
+            // return res.status(401).json({
+            //     success: false,
+            //     message: "UNAUTHORIZED"
+            // });
+            console.log("FROM AUTH MIDDLEWARE: UNAUTHORIZED ACCESS: Redirected to /auth/signin");
+            return res.redirect("/auth/signin");
         };
 
         const user = await authService.getUserFromSession(sessionId);
@@ -25,9 +27,11 @@ export async function authMiddleware(
 
         next();
     } catch (err: any) {
-        return res.status(401).json({
-            success: false,
-            message: err.message || "UNAUTHORIZED"
-        })
+        // return res.status(401).json({
+        //     success: false,
+        //     message: err.message || "UNAUTHORIZED"
+        // })
+        console.error("ERROR FROM AUTH MIDDLEWARE: ", err);
+        next(err); // always pass error to express global error handling block
     }
 }
