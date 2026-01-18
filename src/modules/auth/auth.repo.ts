@@ -1,4 +1,5 @@
 import { prisma } from "../../config/db.js";
+import { generateCsrfToken } from "../../utils/csrf.js";
 
 interface User {
     id: string;
@@ -10,6 +11,7 @@ interface User {
 interface Session {
     id: string;
     userId: string;
+    csrfToken: string;
     createdAt?: Date;
     expiresAt?: Date
 }
@@ -41,9 +43,13 @@ export const authRepo = {
     },
 
     createSession: async (userId: string): Promise<Session> => {
+
+        const csrfToken = generateCsrfToken();
+
         return await prisma.session.create({
             data: {
-                userId
+                userId,
+                csrfToken
             }
         })
     },
@@ -95,9 +101,12 @@ export const authRepo = {
             await authRepo.deleteSessionById(oldestSession!.id);
         }
 
+        const csrfToken = generateCsrfToken();
+
         return await prisma.session.create({
             data: {
-                userId
+                userId,
+                csrfToken
             }
         })
     },

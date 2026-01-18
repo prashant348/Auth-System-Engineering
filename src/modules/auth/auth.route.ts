@@ -1,6 +1,7 @@
 import { Router, type Request, type Response } from "express";
 import { authController } from "./auth.controller.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { csrfMiddleware } from "../../middlewares/csrf.middleware.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -33,6 +34,11 @@ router.get("/me", authMiddleware, (req: Request, res: Response) => {
     return res.sendFile(filepath);
 });
 
-router.post("/signout", authMiddleware, authController.signout);
+router.post(
+    "/signout", 
+    authMiddleware, 
+    csrfMiddleware,
+    authController.signout
+);
 
 export default router;

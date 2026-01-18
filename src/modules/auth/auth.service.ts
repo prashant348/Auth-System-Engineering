@@ -47,7 +47,8 @@ export const authService = {
         return {
             id: user.id,
             email: user.email,
-            session_id: session.id
+            session_id: session.id,
+            csrfToken: session.csrfToken
         }
     },
 
@@ -86,6 +87,7 @@ export const authService = {
 
         try {
             await authRepo.deleteSessionById(sessionId)
+            console.log("session deleted!")
         } catch (err) {
             console.error("SESSION_INVALID")
             return "SESSION_INVALID"

@@ -4,10 +4,10 @@ import { authService } from "./auth.service.js";
 
 export const authController = {
     signup: async (req: Request, res: Response) => {
-        
+
         try {
             const { email, password }: { email: string, password: string } = req.body;
-    
+
             if (!email || !password) {
                 return res.status(400).json({
                     success: false,
@@ -48,8 +48,10 @@ export const authController = {
                     message: "Email and password are required"
                 })
             };
+
             const user = await authService.signin(email, password);
             const sessionId = user.session_id;
+
             console.log(sessionId);
             res.cookie("sessionId", sessionId, {
                 httpOnly: true, // no JS access
@@ -58,6 +60,14 @@ export const authController = {
                 secure: false, // production mai true
                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7days
             })
+            const csrfToken = user.csrfToken
+            res.cookie("csrfToken", csrfToken, {
+                httpOnly: false, // allow JS access
+                sameSite: "lax",
+                path: "/",
+                secure: false, // production mai true
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7days 
+            });
             return res.status(200).json({
                 success: true,
                 message: "User Signed In Successfully",
@@ -105,6 +115,12 @@ export const authController = {
 
             res.clearCookie("sessionId", {
                 httpOnly: true,
+                sameSite: "lax",
+                secure: false // in prod: true
+            });
+
+            res.clearCookie("csrfToken", {
+                httpOnly: false,
                 sameSite: "lax",
                 secure: false // in prod: true
             })

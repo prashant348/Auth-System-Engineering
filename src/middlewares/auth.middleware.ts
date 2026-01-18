@@ -9,9 +9,7 @@ export async function authMiddleware(
 ) {
     try {
         const sessionId = req.cookies.sessionId;
-        console.log("cookies: ", req.cookies)
-        console.log("sessionId: ", sessionId);
-        console.log(req.headers)
+
         if (!sessionId || typeof sessionId !== "string") {
             return res.status(401).json({
                 success: false,

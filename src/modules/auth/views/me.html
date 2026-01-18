@@ -9,12 +9,18 @@
 <body>
     <h1>This is a protected page/route</h1>
     <button onclick="
+        // document.cookie -> can only access the cookies with httpOnly: false
+        const csrfToken = document.cookie.split('=')[1];
+        console.log('csrfToken: ', csrfToken)
         fetch('/auth/signout', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(() => {
+                'Content-Type': 'application/json',
+                'x-csrf-token': csrfToken
+            },
+            credentials: 'include'
+        }).then((data) => {
+            console.log('response: ', data)
             window.location.href = '/auth/signin'
         }).catch((err) => {
             console.log('error in signing out: ', err)
