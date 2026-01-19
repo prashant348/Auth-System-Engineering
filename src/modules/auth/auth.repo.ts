@@ -111,4 +111,21 @@ export const authRepo = {
         })
     },
 
+    getUserById: async (userId: string): Promise<User | null> => {
+        return await prisma.user.findUnique({
+            where: {
+                id: userId
+            }
+        })
+    },
+
+    deleteUser: async (userId: string) => {
+        const user = await prisma.user.delete({
+            where: {
+                id: userId
+            }
+        });
+        return user
+    }
+
 }

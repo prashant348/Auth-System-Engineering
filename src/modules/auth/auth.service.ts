@@ -80,7 +80,7 @@ export const authService = {
             id: session.user.id,
             email: session.user.email
         }
-    }, 
+    },
 
     signout: async (sessionId: string) => {
         if (!sessionId) throw new Error("NO_SESSION");
@@ -94,5 +94,31 @@ export const authService = {
         }
 
         return true;
+    },
+
+    deleteAccount: async (sessionId: string, password: string) => {
+        if (!password) throw new Error("NO_PASSWORD");
+
+
+        // get user id from session
+        const _user = await authService.getUserFromSession(sessionId);
+        const userId = _user.id;
+
+        // get complete user details from user id
+        const user = await authRepo.getUserById(userId);
+        if (!user) throw new Error("USER_NOT_FOUND");
+
+        // get password hash
+        const plainPassword = password;
+        const storedPassword = user.passwordHash;
+
+        // validate password
+        const ok = await validatePassword(plainPassword, storedPassword);
+
+        if (!ok) throw new Error("INVALID_PASSWORD");
+
+        await authRepo.deleteUser(userId);
+        return true;
+
     }
 }

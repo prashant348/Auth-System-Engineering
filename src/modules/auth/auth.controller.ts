@@ -141,5 +141,53 @@ export const authController = {
                 message: "Server Error"
             })
         }
+    },
+
+    deleteAccount: async (req: Request, res: Response) => {
+        try {
+            const { password } = req.body;
+            const sessionId = req.cookies.sessionId;
+
+            if (!password) return res.status(400).json({
+                success: false,
+                message: "Password is required"
+            });
+
+            if (!sessionId) return res.status(401).json({
+                success: false,
+                message: "Invalid Session"
+            });
+
+            const ok = await authService.deleteAccount(sessionId, password);
+
+            console.log("user deleted: ", ok); 
+
+            res.clearCookie("sessionId", {
+                httpOnly: true,
+                sameSite: "lax",
+                secure: false // in prod: true
+            })
+
+            res.clearCookie("csrfToken", {
+                httpOnly: false,
+                sameSite: "lax",
+                secure: false // in prod: true
+            })
+
+            return res.status(204).json({});
+
+        } catch (err: any) {
+            console.error("Error in deleteAccount controller: ", err);
+            if (err.message === "INVALID_PASSWORD") {
+                return res.status(401).json({
+                    success: true,
+                    message: "Invalid Password"
+                })
+            }
+            res.status(500).json({
+                success: false,
+                message: "Server Error"
+            });
+        }
     }
 }

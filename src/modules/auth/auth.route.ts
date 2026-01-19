@@ -42,4 +42,11 @@ router.post(
     authController.signout
 );
 
+router.delete(
+    "/delete-account",
+    authMiddleware,
+    csrfMiddleware,
+    authController.deleteAccount
+)
+
 export default router;
